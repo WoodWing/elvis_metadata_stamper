@@ -2,6 +2,8 @@
 
 With this plug-in you can easily apply a predefined set of metadata values to a selection of assets. This is for example useful for asset managers that need to apply copyright information when importing assets. 
 
+![metadata stamper in action](https://github.com/WoodWing/elvis_metadata_stamper/blob/master/metadata-stamper.gif "metadata stamper in action")
+
 ## Prerequisites
 
 The integration requires:
