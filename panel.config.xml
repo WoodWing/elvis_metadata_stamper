@@ -6,6 +6,7 @@
 			<requiresAtLeast>5.25.0.0</requiresAtLeast>
 		</version>
 		<description>Stamp assets with metadata</description>
+		<documentationUrl>https://github.com/WoodWing/elvis_metadata_stamper</documentationUrl>
 	</info>
 	<panel>
 		<url>${pluginUrl}/index.html</url>
@@ -16,7 +17,9 @@
 			<panelLocation id="mainRightPanel" order="1"/>
 		</panelLocations>
 
-		<requiredRoles/>
+		<requiredRoles>
+			<role>ROLE_CUSTOM_METADATA_STAMPER</role>
+		</requiredRoles>
 
 		<messages>
 			<entries locale="en_US">
