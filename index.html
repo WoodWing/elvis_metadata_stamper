@@ -79,11 +79,24 @@
 			for (var fieldName in stampMetadata) {
 				if (stampMetadata.hasOwnProperty(fieldName)) {
 					var fieldLabel = elvisApi.messages.getString('field_label.' + fieldName);
-					html += '<div class="stamp-metadata-field"><span class="stamp-metadata-name">' + fieldLabel + ': </span><span class="stamp-metadata-value">' + stampMetadata[fieldName] + '</span></div>'
+					var formattedValue = getFormattedValue(fieldName, stampMetadata[fieldName]);
+					html += '<div class="stamp-metadata-field"><span class="stamp-metadata-name">' + fieldLabel + ': </span><span class="stamp-metadata-value">' + formattedValue + '</span></div>'
 				}
 			}
 			html += '</div>'
 			return (html);
+		}
+
+		function getFormattedValue(fieldName, fieldValue) {
+			var fi = fieldInfo.fieldInfoByName[fieldName];
+			if (fi.datatype === 'datetime') {
+				// Asssume text or numeric fields
+				return fieldValue.formatted;
+			}
+			else if (fi.multivalue) {
+				return fieldValue.join(', ');
+			}
+			return fieldValue;
 		}
 
 		function getStampMetadata(hit) {
