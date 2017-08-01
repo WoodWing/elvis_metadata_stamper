@@ -115,10 +115,31 @@
 			}
 			var query = 'id:' + selectedHits.map(function (hit) { return hit.id }).join(' OR id:');
 			var stampHitId = $(this).data('hit-id');
-			var metadata = stampHits[stampHitId];
+			var metadata = getMetadataToUpdate(stampHits[stampHitId]);
 			elvisApi.updatebulk(query, metadata, function () {
 				console.log('update finished');
 			});
+		}
+
+		function getMetadataToUpdate(sourceMetadata) {
+			var metadata = {};
+			for (var fieldName in sourceMetadata) {
+				var fi = fieldInfo.fieldInfoByName[fieldName];
+				var sourceValue = sourceMetadata[fieldName];
+				var value = null;
+				if (fi.datatype === 'datetime') {
+					value = sourceValue.value;
+				}
+				else if (fi.multivalue) {
+					// Asssume text or numeric fields
+					value = '+' + sourceValue.join(', +');
+				}
+				else {
+					value = sourceValue;
+				}
+				metadata[fieldName] = value;
+			}
+			return metadata;
 		}
 
 		function showCorrectPanel() {
