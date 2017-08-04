@@ -29,14 +29,17 @@
 		var stampHits;
 		var selectedHits;
 		var fieldInfo;
+		var starting = true;
 
 		function selectionUpdated() {
-			// Get current asset seelction from Elvis context
+			// Get current asset selection from Elvis context
 			selectedHits = elvisContext.activeTab.originalAssetSelection.filter(function (hit) {
 				// We don't want to stamp stamp-templates by accident
 				return !hit.metadata.filename.endsWith('.stamp');
 			});
-			showCorrectPanel();
+			if (!starting) {
+				showCorrectPanel();
+			}
 		}
 
 		function detemineStampFields(callback) {
@@ -79,11 +82,24 @@
 			for (var fieldName in stampMetadata) {
 				if (stampMetadata.hasOwnProperty(fieldName)) {
 					var fieldLabel = elvisApi.messages.getString('field_label.' + fieldName);
-					html += '<div class="stamp-metadata-field"><span class="stamp-metadata-name">' + fieldLabel + ': </span><span class="stamp-metadata-value">' + stampMetadata[fieldName] + '</span></div>'
+					var formattedValue = getFormattedValue(fieldName, stampMetadata[fieldName]);
+					html += '<div class="stamp-metadata-field"><span class="stamp-metadata-name">' + fieldLabel + ': </span><span class="stamp-metadata-value">' + formattedValue + '</span></div>'
 				}
 			}
 			html += '</div>'
 			return (html);
+		}
+
+		function getFormattedValue(fieldName, fieldValue) {
+			var fi = fieldInfo.fieldInfoByName[fieldName];
+			if (fi.datatype === 'datetime') {
+				// Asssume text or numeric fields
+				return fieldValue.formatted;
+			}
+			else if (fi.multivalue) {
+				return fieldValue.join(', ');
+			}
+			return fieldValue;
 		}
 
 		function getStampMetadata(hit) {
@@ -102,10 +118,31 @@
 			}
 			var query = 'id:' + selectedHits.map(function (hit) { return hit.id }).join(' OR id:');
 			var stampHitId = $(this).data('hit-id');
-			var metadata = stampHits[stampHitId];
+			var metadata = getMetadataToUpdate(stampHits[stampHitId]);
 			elvisApi.updatebulk(query, metadata, function () {
 				console.log('update finished');
 			});
+		}
+
+		function getMetadataToUpdate(sourceMetadata) {
+			var metadata = {};
+			for (var fieldName in sourceMetadata) {
+				var fi = fieldInfo.fieldInfoByName[fieldName];
+				var sourceValue = sourceMetadata[fieldName];
+				var value = null;
+				if (fi.datatype === 'datetime') {
+					value = sourceValue.value;
+				}
+				else if (fi.multivalue) {
+					// Asssume text or numeric fields
+					value = '+' + sourceValue.join(', +');
+				}
+				else {
+					value = sourceValue;
+				}
+				metadata[fieldName] = value;
+			}
+			return metadata;
 		}
 
 		function showCorrectPanel() {
@@ -142,7 +179,11 @@
 				// 2. Determine which fields should be stamped
 				detemineStampFields(function () {
 					// 3. Load stamp files
-					loadStamps(showCorrectPanel);
+					loadStamps(function () {
+						// 4. Show the right panel, startup sequence finished
+						showCorrectPanel();
+						starting = false;
+					});
 				});
 			});
 		});
@@ -169,13 +210,16 @@
 			color: #777;
 		}
 
+		.noStamps,
+		.noSelection {
+			height: 100%;
+		}
+
 		.stampPanel,
 		.noStamps,
 		.noSelection {
 			padding: 10px 20px;
 			width: 100%;
-			height: 100%;
-			display: flex;
 			flex-direction: column;
 		}
 
@@ -206,7 +250,10 @@
 		}
 
 		.stamp-metadata-field {
-			font-size: 11px;
+			word-break: break-word;
+			height: auto;
+			max-height: 80px;
+			overflow: hidden;
 		}
 
 		.stamp-metadata-value {
@@ -240,18 +287,18 @@
 
 <body>
 
-	<div class="stampPanel">
+	<div class="stampPanel" style="display: none">
 		<div class="intro">Choose a template and get your files stamped with metadata!</div>
 		<ul class="stamps"></ul>
 	</div>
 
-	<div class="noStamps empty-state">
-		<h5>Unable to stamp, no templates available</h5>
-		<div>You can easily create stamp templates by uploading an empty file with extension ".stamp" and apply metadata to it.</div>
+	<div class="noStamps empty-state" style="display: none">
+		<h5>No templates available, unable to stamp files</h5>
+		<div>You can easily create stamp templates by uploading an empty file with extension ".stamp" and then apply metadata to it.</div>
 	</div>
 
-	<div class="noSelection empty-state">
-		<h5>Unable to stamp, no files selected</h5>
+	<div class="noSelection empty-state" style="display: none">
+		<h5>No files selected</h5>
 		<div>Please select one or multiple files to stamp.</div>
 	</div>
 
