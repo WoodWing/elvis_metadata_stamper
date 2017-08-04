@@ -3,7 +3,7 @@
 	<info>
 		<version>
 			<pluginVersion>1.0</pluginVersion>
-			<requiresAtLeast>5.25.0.0</requiresAtLeast>
+			<requiresAtLeast>6.1.0.0</requiresAtLeast>
 		</version>
 		<description>Stamp assets with metadata</description>
 		<documentationUrl>https://github.com/WoodWing/elvis_metadata_stamper</documentationUrl>
@@ -11,7 +11,7 @@
 	<panel>
 		<url>${pluginUrl}/index.html</url>
 		
-		<iconUrl>${pluginUrl}/icon.png</iconUrl>
+		<iconUrl>${pluginUrl}/icon.svg</iconUrl>
 
 		<panelLocations>
 			<panelLocation id="mainRightPanel" order="1"/>
