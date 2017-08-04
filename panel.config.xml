@@ -2,7 +2,7 @@
 <plugin>
 	<info>
 		<version>
-			<pluginVersion>1.0</pluginVersion>
+			<pluginVersion>1.1</pluginVersion>
 			<requiresAtLeast>6.1.0.0</requiresAtLeast>
 		</version>
 		<description>Stamp assets with metadata</description>

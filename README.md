@@ -40,6 +40,12 @@ Stamping assets is easy:
 
 ## Changelog
 
+v1.1
+* Fix support for tags and datetime fields
+* Fix IE UI glitches
+* Handle long metadata values
+* Fix Firefox UI glitches
+
 v1.0
 * Initial implementation
 * Apply metadata to assets by clicking on a stamp template
