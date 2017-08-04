@@ -29,14 +29,17 @@
 		var stampHits;
 		var selectedHits;
 		var fieldInfo;
+		var starting = true;
 
 		function selectionUpdated() {
-			// Get current asset seelction from Elvis context
+			// Get current asset selection from Elvis context
 			selectedHits = elvisContext.activeTab.originalAssetSelection.filter(function (hit) {
 				// We don't want to stamp stamp-templates by accident
 				return !hit.metadata.filename.endsWith('.stamp');
 			});
-			showCorrectPanel();
+			if (!starting) {
+				showCorrectPanel();
+			}
 		}
 
 		function detemineStampFields(callback) {
@@ -176,7 +179,11 @@
 				// 2. Determine which fields should be stamped
 				detemineStampFields(function () {
 					// 3. Load stamp files
-					loadStamps(showCorrectPanel);
+					loadStamps(function () {
+						// 4. Show the right panel, startup sequence finished
+						showCorrectPanel();
+						starting = false;
+					});
 				});
 			});
 		});
@@ -213,7 +220,6 @@
 		.noSelection {
 			padding: 10px 20px;
 			width: 100%;
-			display: flex;
 			flex-direction: column;
 		}
 
@@ -281,18 +287,18 @@
 
 <body>
 
-	<div class="stampPanel">
+	<div class="stampPanel" style="display: none">
 		<div class="intro">Choose a template and get your files stamped with metadata!</div>
 		<ul class="stamps"></ul>
 	</div>
 
-	<div class="noStamps empty-state">
-		<h5>Unable to stamp, no templates available</h5>
-		<div>You can easily create stamp templates by uploading an empty file with extension ".stamp" and apply metadata to it.</div>
+	<div class="noStamps empty-state" style="display: none">
+		<h5>No templates available, unable to stamp files</h5>
+		<div>You can easily create stamp templates by uploading an empty file with extension ".stamp" and then apply metadata to it.</div>
 	</div>
 
-	<div class="noSelection empty-state">
-		<h5>Unable to stamp, no files selected</h5>
+	<div class="noSelection empty-state" style="display: none">
+		<h5>No files selected</h5>
 		<div>Please select one or multiple files to stamp.</div>
 	</div>
 
