@@ -69,11 +69,13 @@
 				var stamps = '';
 				data.hits.forEach(function (hit) {
 					var stampMetadata = getStampMetadata(hit);
-					stampHits[hit.id] = stampMetadata;
-					stamps += '<li class="stamp-item" data-hit-id="' + hit.id + '">'
-						+ '<div class="stamp">' + hit.metadata.baseName + '</div>'
-						+ getMetadataHtml(stampMetadata)
-						+ '</li>';
+					if (stampMetadata) {
+						stampHits[hit.id] = stampMetadata;
+						stamps += '<li class="stamp-item" data-hit-id="' + hit.id + '">'
+							+ '<div class="stamp">' + hit.metadata.baseName + '</div>'
+							+ getMetadataHtml(stampMetadata)
+							+ '</li>';
+					}
 				});
 				$('.stamps').html(stamps);
 				$('.stamp-item').click(stamp);
@@ -113,7 +115,7 @@
 					stampMetadata[fieldName] = hit.metadata[fieldName];
 				}
 			}
-			return stampMetadata;
+			return $.isEmptyObject(stampMetadata) ? null : stampMetadata;
 		}
 
 		function stamp() {
