@@ -22,7 +22,6 @@
 	</script>
 
 	<script language="JavaScript">
-		var elvisContext = ElvisPlugin.resolveElvisContext();
 		var fieldsToIgnore = ['filename', 'previewState', 'thumbnailState'];
 		var elvisApi;
 		var stampFields;
@@ -30,8 +29,13 @@
 		var selectedHits;
 		var fieldInfo;
 		var starting = true;
+		var elvisContext;
 
 		function selectionUpdated() {
+			if (!elvisContext) {
+				// Context is no longer available, plugin is probably not longer active
+				return;
+			}
 			// Get current asset selection from Elvis context
 			selectedHits = elvisContext.activeTab.originalAssetSelection.filter(function (hit) {
 				// We don't want to stamp stamp-templates by accident
@@ -172,6 +176,8 @@
 		}
 
 		$(function () {
+			elvisContext = ElvisPlugin.resolveElvisContext();
+			elvisContext.updateCallback = selectionUpdated;
 			elvisApi = new ElvisAPI("${serverUrl}");
 			selectionUpdated();
 			// 1. Load messages from server
@@ -187,9 +193,6 @@
 				});
 			});
 		});
-
-		// Register callback handler. This handler is called when the elvisContext changes (asset selection change)
-		elvisContext.updateCallback = selectionUpdated;
 	</script>
 
 	<style type="text/css">
