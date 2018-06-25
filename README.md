@@ -14,7 +14,9 @@ The integration requires:
 ## Installation
 
 * Read the [instruction](https://helpcenter.woodwing.com/hc/en-us/articles/202965685-Plug-ins-introduction-management) on installing Elvis plug-ins.
-* Copy the contents of this folder to the Elvis Server plug-ins folder: `<Elvis Config>/plugins/active`.
+* Download or clone this pacakge.
+* If you downloaded the package: unpack the zip file and remove the GitHub branch postfix from the folder name (typically -master)
+* Copy the folder to the Elvis Server plug-ins folder: `<Elvis Config>/plugins/active`.
 * Activate the plug-in through the Elvis Management Console
 
 ## Creating stamp templates
