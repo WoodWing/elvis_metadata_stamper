@@ -46,7 +46,7 @@
 			}
 		}
 
-		function detemineStampFields(callback) {
+		function determineStampFields(callback) {
 			elvisApi.fieldinfo(function (data) {
 				stampFields = [];
 				fieldInfo = data;
@@ -185,7 +185,7 @@
 			// 1. Load messages from server
 			elvisApi.loadMessages(null, function () {
 				// 2. Determine which fields should be stamped
-				detemineStampFields(function () {
+				determineStampFields(function () {
 					// 3. Load stamp files
 					loadStamps(function () {
 						// 4. Show the right panel, startup sequence finished
