@@ -1,10 +1,8 @@
-<html>
 
+<html>
 <head>
-	<script src="${pluginsBaseRootUrl}/web.shared/jquery.js" type="text/javascript"></script>
-	<script src="${pluginsBaseRootUrl}/web.shared/jquery.class.js" type="text/javascript"></script>
-	<script src="${pluginsBaseRootUrl}/web.shared/jquery.cookie.js" type="text/javascript"></script>
-	<script src="${pluginsBaseRootUrl}/web.shared/elvis_api/js/jquery.elvis.js" type="text/javascript"></script>
+	<script src="https://unpkg.com/@woodwing/assets-client-sdk"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 
 	<script language="JavaScript">
 		// Polyfill endsWith
@@ -177,10 +175,10 @@
 			$(className).css('display', 'none');
 		}
 
-		$(function () {
-			elvisContext = ElvisPlugin.resolveElvisContext();
+		(async () => {
+			elvisContext = await AssetsClientSdk.legacyElvisContext();
 			elvisContext.updateCallback = selectionUpdated;
-			elvisApi = new ElvisAPI("${serverUrl}");
+			elvisApi = await AssetsClientSdk.legacyElvisAPI();
 			selectionUpdated();
 			// 1. Load messages from server
 			elvisApi.loadMessages(null, function () {
@@ -194,7 +192,7 @@
 					});
 				});
 			});
-		});
+		})();
 	</script>
 
 	<style type="text/css">
