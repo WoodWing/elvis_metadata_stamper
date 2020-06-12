@@ -176,7 +176,7 @@
 		}
 
         (async () => {
-            const contextService = await window.AssetsClientSdk.AssetsPluginContext.get(['http://localhost:9000']/** insert server url (or client url if it differs from the server) */);
+            const contextService = await window.AssetsClientSdk.AssetsPluginContext.get();
             elvisContext = new window.AssetsClientSdk.LegacyElvisContextWrapper(contextService);
             elvisContext.updateCallback = selectionUpdated;
             const apiClient = window.AssetsClientSdk.AssetsApiClient.fromPluginContext(contextService);
