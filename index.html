@@ -176,11 +176,11 @@
 		}
 
         (async () => {
-            const contextService = await window.AssetsPluginContext.get(/** insert server url (or client url if it differs from the server) */);
-            elvisContext = new LegacyElvisContextWrapper(contextService);
+            const contextService = await window.AssetsClientSdk.AssetsPluginContext.get(['http://localhost:9000']/** insert server url (or client url if it differs from the server) */);
+            elvisContext = new window.AssetsClientSdk.LegacyElvisContextWrapper(contextService);
             elvisContext.updateCallback = selectionUpdated;
-            const apiClient = AssetsApiClient.fromPluginContext(contextService);
-            elvisApi = new LegacyElvisApiWrapper(apiClient);
+            const apiClient = window.AssetsClientSdk.AssetsApiClient.fromPluginContext(contextService);
+            elvisApi = new window.AssetsClientSdk.LegacyElvisApiWrapper(apiClient);
             selectionUpdated();
 			// 1. Load messages from server
 			elvisApi.loadMessages(null, function () {
