@@ -1,6 +1,6 @@
 # Elvis DAM stamp metadata plug-in
 
-With this plug-in you can easily apply a predefined set of metadata values to a selection of assets. This is for example useful for asset managers that need to apply copyright information when importing assets. 
+With this plug-in you can easily apply a predefined set of metadata values to a selection of assets. This is for example useful for asset managers that need to apply copyright information when importing assets.
 
 ![metadata stamper in action](https://github.com/WoodWing/elvis_metadata_stamper/blob/master/metadata-stamper.gif "metadata stamper in action")
 
@@ -8,8 +8,9 @@ With this plug-in you can easily apply a predefined set of metadata values to a 
 
 The integration requires:
 
-* Fully installed and licensed [Elvis DAM server](https://www.woodwing.com/en/digital-asset-management-system) - v6.1 or higher. 
-* Elvis administrator knowledge
+* Fully installed and licensed [WoodWing Assets server](https://www.woodwing.com/en/digital-asset-management-system) - v6.59 or higher.
+  * If you want to use this plugin on Elvis DAM v6.1 - WoodWing Assets v6.58, use the [1.2 release](https://github.com/WoodWing/elvis_metadata_stamper/releases/tag/v1.2) of this plugin.
+* WoodWing Assets administrator knowledge
 
 ## Installation
 
@@ -42,12 +43,4 @@ Stamping assets is easy:
 
 ## Changelog
 
-v1.1
-* Fix support for tags and datetime fields
-* Fix IE UI glitches
-* Handle long metadata values
-* Fix Firefox UI glitches
-
-v1.0
-* Initial implementation
-* Apply metadata to assets by clicking on a stamp template
+See [releases](https://github.com/WoodWing/elvis_metadata_stamper/releases)
