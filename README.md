@@ -14,8 +14,12 @@ The integration requires:
 
 ## Installation
 
-* Read the [instruction](https://helpcenter.woodwing.com/hc/en-us/articles/202965685-Plug-ins-introduction-management) on installing Elvis plug-ins.
-* Download or clone this pacakge.
+V2.0
+* Read the [instruction](https://helpcenter.woodwing.com/hc/articles/360054980711) on installing Assets external plug-ins.
+
+V1.2
+* Read the [instruction](https://helpcenter.woodwing.com/hc/articles/115002644606) on installing Elvis plug-ins.
+* Download or clone this package.
 * If you downloaded the package: unpack the zip file and remove the GitHub branch postfix from the folder name (typically -master)
 * Copy the folder to the Elvis Server plug-ins folder: `<Elvis Config>/plugins/active`.
 * Activate the plug-in through the Elvis Management Console
