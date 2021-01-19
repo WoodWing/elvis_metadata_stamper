@@ -15,6 +15,7 @@ The integration requires:
 ## Installation
 
 V2.0
+* Modified to work as an externally hosted plugin, does not work as locally installed plugin
 * Read the [instruction](https://helpcenter.woodwing.com/hc/articles/360054980711) on installing Assets external plug-ins.
 
 V1.2
