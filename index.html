@@ -1,312 +1,312 @@
-<html>
+<!DOCTYPE html>
+<html lang="EN">
+	<head>
+		<script src="${pluginsBaseRootUrl}/web.shared/jquery.js" type="text/javascript"></script>
+		<script src="${pluginsBaseRootUrl}/web.shared/jquery.class.js" type="text/javascript"></script>
+		<script src="${pluginsBaseRootUrl}/web.shared/jquery.cookie.js" type="text/javascript"></script>
+		<script src="${pluginsBaseRootUrl}/web.shared/elvis_api/js/jquery.elvis.js" type="text/javascript"></script>
 
-<head>
-	<script src="${pluginsBaseRootUrl}/web.shared/jquery.js" type="text/javascript"></script>
-	<script src="${pluginsBaseRootUrl}/web.shared/jquery.class.js" type="text/javascript"></script>
-	<script src="${pluginsBaseRootUrl}/web.shared/jquery.cookie.js" type="text/javascript"></script>
-	<script src="${pluginsBaseRootUrl}/web.shared/elvis_api/js/jquery.elvis.js" type="text/javascript"></script>
-
-	<script language="JavaScript">
-		// Polyfill endsWith
-		if (!String.prototype.endsWith) {
-			String.prototype.endsWith = function (searchString, position) {
-				var subjectString = this.toString();
-				if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
-					position = subjectString.length;
-				}
-				position -= searchString.length;
-				var lastIndex = subjectString.lastIndexOf(searchString, position);
-				return lastIndex !== -1 && lastIndex === position;
-			};
-		}
-	</script>
-
-	<script language="JavaScript">
-		var fieldsToIgnore = ['filename', 'previewState', 'thumbnailState'];
-		var elvisApi;
-		var stampFields;
-		var stampHits;
-		var selectedHits;
-		var fieldInfo;
-		var starting = true;
-		var elvisContext;
-
-		function selectionUpdated() {
-			if (!elvisContext) {
-				// Context is no longer available, plugin is probably not longer active
-				return;
-			}
-			// Get current asset selection from Elvis context
-			selectedHits = elvisContext.activeTab.originalAssetSelection.filter(function (hit) {
-				// We don't want to stamp stamp-templates by accident
-				return !hit.metadata.filename.endsWith('.stamp');
-			});
-			if (!starting) {
-				showCorrectPanel();
-			}
-		}
-
-		function detemineStampFields(callback) {
-			elvisApi.fieldinfo(function (data) {
-				stampFields = [];
-				fieldInfo = data;
-				var fields = data.fieldInfoByName;
-				for (var fieldName in fields) {
-					if (fieldsToIgnore.indexOf(fieldName) == -1 && fields.hasOwnProperty(fieldName) && fields[fieldName].editable) {
-						stampFields.push(fieldName);
+		<script type="text/javascript">
+			// Polyfill endsWith
+			if (!String.prototype.endsWith) {
+				String.prototype.endsWith = function (searchString, position) {
+					var subjectString = this.toString();
+					if (typeof position !== 'number' || !isFinite(position) || Math.floor(position) !== position || position > subjectString.length) {
+						position = subjectString.length;
 					}
-				}
-				callback();
-			});
-		}
+					position -= searchString.length;
+					var lastIndex = subjectString.lastIndexOf(searchString, position);
+					return lastIndex !== -1 && lastIndex === position;
+				};
+			}
+		</script>
 
-		function loadStamps(callback) {
-			elvisApi.search({
-				q: 'extension:stamp',
-				sort: 'filename'
-			}, function (data) {
-				stampHits = [];
-				var stamps = '';
-				data.hits.forEach(function (hit) {
-					var stampMetadata = getStampMetadata(hit);
-					if (stampMetadata) {
-						stampHits[hit.id] = stampMetadata;
-						stamps += '<li class="stamp-item" data-hit-id="' + hit.id + '">'
-							+ '<div class="stamp">' + hit.metadata.baseName + '</div>'
-							+ getMetadataHtml(stampMetadata)
-							+ '</li>';
-					}
+		<script type="text/javascript">
+			var fieldsToIgnore = ['filename', 'previewState', 'thumbnailState'];
+			var elvisApi;
+			var stampFields;
+			var stampHits;
+			var selectedHits;
+			var fieldInfo;
+			var starting = true;
+			var elvisContext;
+
+			function selectionUpdated() {
+				if (!elvisContext) {
+					// Context is no longer available, plugin is probably not longer active
+					return;
+				}
+				// Get current asset selection from Elvis context
+				selectedHits = elvisContext.activeTab.originalAssetSelection.filter(function (hit) {
+					// We don't want to stamp stamp-templates by accident
+					return !hit.metadata.filename.endsWith('.stamp');
 				});
-				$('.stamps').html(stamps);
-				$('.stamp-item').click(stamp);
-				callback();
-			});
-		}
-
-		function getMetadataHtml(stampMetadata) {
-			var html = '<div class="stamp-metadata">';
-			for (var fieldName in stampMetadata) {
-				if (stampMetadata.hasOwnProperty(fieldName)) {
-					var fieldLabel = elvisApi.messages.getString('field_label.' + fieldName);
-					var formattedValue = getFormattedValue(fieldName, stampMetadata[fieldName]);
-					html += '<div class="stamp-metadata-field"><span class="stamp-metadata-name">' + fieldLabel + ': </span><span class="stamp-metadata-value">' + formattedValue + '</span></div>'
+				if (!starting) {
+					showCorrectPanel();
 				}
 			}
-			html += '</div>'
-			return (html);
-		}
 
-		function getFormattedValue(fieldName, fieldValue) {
-			var fi = fieldInfo.fieldInfoByName[fieldName];
-			if (fi.datatype === 'datetime') {
-				// Asssume text or numeric fields
-				return fieldValue.formatted;
+			function detemineStampFields(callback) {
+				elvisApi.fieldinfo(function (data) {
+					stampFields = [];
+					fieldInfo = data;
+					var fields = data.fieldInfoByName;
+					for (var fieldName in fields) {
+						if (fieldsToIgnore.indexOf(fieldName) == -1 && fields.hasOwnProperty(fieldName) && fields[fieldName].editable) {
+							stampFields.push(fieldName);
+						}
+					}
+					callback();
+				});
 			}
-			else if (fi.multivalue) {
-				return fieldValue.join(', ');
-			}
-			return fieldValue;
-		}
 
-		function getStampMetadata(hit) {
-			var stampMetadata = {};
-			for (var fieldName in hit.metadata) {
-				if (stampFields.indexOf(fieldName) > -1 && hit.metadata.hasOwnProperty(fieldName)) {
-					stampMetadata[fieldName] = hit.metadata[fieldName];
+			function loadStamps(callback) {
+				elvisApi.search({
+					q: 'extension:stamp',
+					sort: 'filename'
+				}, function (data) {
+					stampHits = [];
+					var stamps = '';
+					data.hits.forEach(function (hit) {
+						var stampMetadata = getStampMetadata(hit);
+						if (stampMetadata) {
+							stampHits[hit.id] = stampMetadata;
+							stamps += '<li class="stamp-item" data-hit-id="' + hit.id + '">'
+								+ '<div class="stamp">' + hit.metadata.baseName + '</div>'
+								+ getMetadataHtml(stampMetadata)
+								+ '</li>';
+						}
+					});
+					$('.stamps').html(stamps);
+					$('.stamp-item').click(stamp);
+					callback();
+				});
+			}
+
+			function getMetadataHtml(stampMetadata) {
+				var html = '<div class="stamp-metadata">';
+				for (var fieldName in stampMetadata) {
+					if (stampMetadata.hasOwnProperty(fieldName)) {
+						var fieldLabel = elvisApi.messages.getString('field_label.' + fieldName);
+						var formattedValue = getFormattedValue(fieldName, stampMetadata[fieldName]);
+						html += '<div class="stamp-metadata-field"><span class="stamp-metadata-name">' + fieldLabel + ': </span><span class="stamp-metadata-value">' + formattedValue + '</span></div>'
+					}
 				}
+				html += '</div>'
+				return (html);
 			}
-			return $.isEmptyObject(stampMetadata) ? null : stampMetadata;
-		}
 
-		function stamp() {
-			if (!selectedHits || selectedHits.length == 0) {
-				return;
-			}
-			var query = 'id:' + selectedHits.map(function (hit) { return hit.id }).join(' OR id:');
-			var stampHitId = $(this).data('hit-id');
-			var metadata = getMetadataToUpdate(stampHits[stampHitId]);
-			elvisApi.updatebulk(query, metadata, function () {
-				console.log('update finished');
-			});
-		}
-
-		function getMetadataToUpdate(sourceMetadata) {
-			var metadata = {};
-			for (var fieldName in sourceMetadata) {
+			function getFormattedValue(fieldName, fieldValue) {
 				var fi = fieldInfo.fieldInfoByName[fieldName];
-				var sourceValue = sourceMetadata[fieldName];
-				var value = null;
 				if (fi.datatype === 'datetime') {
-					value = sourceValue.value;
+					// Asssume text or numeric fields
+					return fieldValue.formatted;
 				}
 				else if (fi.multivalue) {
-					// Asssume text or numeric fields
-					value = '+' + sourceValue.join(', +');
+					return fieldValue.join(', ');
+				}
+				return fieldValue;
+			}
+
+			function getStampMetadata(hit) {
+				var stampMetadata = {};
+				for (var fieldName in hit.metadata) {
+					if (stampFields.indexOf(fieldName) > -1 && hit.metadata.hasOwnProperty(fieldName)) {
+						stampMetadata[fieldName] = hit.metadata[fieldName];
+					}
+				}
+				return $.isEmptyObject(stampMetadata) ? null : stampMetadata;
+			}
+
+			function stamp() {
+				if (!selectedHits || selectedHits.length == 0) {
+					return;
+				}
+				var query = 'id:' + selectedHits.map(function (hit) { return hit.id }).join(' OR id:');
+				var stampHitId = $(this).data('hit-id');
+				var metadata = getMetadataToUpdate(stampHits[stampHitId]);
+				elvisApi.updatebulk(query, metadata, function () {
+					console.log('update finished');
+				});
+			}
+
+			function getMetadataToUpdate(sourceMetadata) {
+				var metadata = {};
+				for (var fieldName in sourceMetadata) {
+					var fi = fieldInfo.fieldInfoByName[fieldName];
+					var sourceValue = sourceMetadata[fieldName];
+					var value = null;
+					if (fi.datatype === 'datetime') {
+						value = sourceValue.value;
+					}
+					else if (fi.multivalue) {
+						// Asssume text or numeric fields
+						value = '+' + sourceValue.join(', +');
+					}
+					else {
+						value = sourceValue;
+					}
+					metadata[fieldName] = value;
+				}
+				return metadata;
+			}
+
+			function showCorrectPanel() {
+				if (stampHits && Object.keys(stampHits).length > 0 && selectedHits && selectedHits.length > 0) {
+					hide('.noStamps');
+					hide('.noSelection');
+					show('.stampPanel');
+				}
+				else if (!stampHits || Object.keys(stampHits).length == 0) {
+					hide('.noSelection');
+					hide('.stampPanel');
+					show('.noStamps');
 				}
 				else {
-					value = sourceValue;
+					hide('.noStamps');
+					hide('.stampPanel');
+					show('.noSelection');
 				}
-				metadata[fieldName] = value;
 			}
-			return metadata;
-		}
 
-		function showCorrectPanel() {
-			if (stampHits && Object.keys(stampHits).length > 0 && selectedHits && selectedHits.length > 0) {
-				hide('.noStamps');
-				hide('.noSelection');
-				show('.stampPanel');
+			function show(className) {
+				$(className).css('display', 'flex');
 			}
-			else if (!stampHits || Object.keys(stampHits).length == 0) {
-				hide('.noSelection');
-				hide('.stampPanel');
-				show('.noStamps');
+
+			function hide(className) {
+				$(className).css('display', 'none');
 			}
-			else {
-				hide('.noStamps');
-				hide('.stampPanel');
-				show('.noSelection');
-			}
-		}
 
-		function show(className) {
-			$(className).css('display', 'flex');
-		}
-
-		function hide(className) {
-			$(className).css('display', 'none');
-		}
-
-		$(function () {
-			elvisContext = ElvisPlugin.resolveElvisContext();
-			elvisContext.updateCallback = selectionUpdated;
-			elvisApi = new ElvisAPI("${serverUrl}");
-			selectionUpdated();
-			// 1. Load messages from server
-			elvisApi.loadMessages(null, function () {
-				// 2. Determine which fields should be stamped
-				detemineStampFields(function () {
-					// 3. Load stamp files
-					loadStamps(function () {
-						// 4. Show the right panel, startup sequence finished
-						showCorrectPanel();
-						starting = false;
+			$(function () {
+				elvisContext = ElvisPlugin.resolveElvisContext();
+				elvisContext.updateCallback = selectionUpdated;
+				elvisApi = new ElvisAPI("${serverUrl}");
+				selectionUpdated();
+				// 1. Load messages from server
+				elvisApi.loadMessages(null, function () {
+					// 2. Determine which fields should be stamped
+					detemineStampFields(function () {
+						// 3. Load stamp files
+						loadStamps(function () {
+							// 4. Show the right panel, startup sequence finished
+							showCorrectPanel();
+							starting = false;
+						});
 					});
 				});
 			});
-		});
-	</script>
+		</script>
 
-	<style type="text/css">
-		@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700');
-		* {
-			box-sizing: border-box;
-			-webkit-font-smoothing: antialiased;
-			font-size: 12px;
-			font-weight: 400;
-		}
+		<style type="text/css">
+			@import url('https://fonts.googleapis.com/css?family=Lato:300,400,700');
+			* {
+				box-sizing: border-box;
+				-webkit-font-smoothing: antialiased;
+				font-size: 12px;
+				font-weight: 400;
+			}
 
-		html,
-		body {
-			font-family: Lato, sans-serif;
-			width: 100%;
-			height: 100%;
-			margin: 0px;
-			color: #777;
-		}
+			html,
+			body {
+				font-family: Lato, sans-serif;
+				width: 100%;
+				height: 100%;
+				margin: 0px;
+				color: #777;
+			}
 
-		.noStamps,
-		.noSelection {
-			height: 100%;
-		}
+			.noStamps,
+			.noSelection {
+				height: 100%;
+			}
 
-		.stampPanel,
-		.noStamps,
-		.noSelection {
-			padding: 10px 20px;
-			width: 100%;
-			flex-direction: column;
-		}
+			.stampPanel,
+			.noStamps,
+			.noSelection {
+				padding: 10px 20px;
+				width: 100%;
+				flex-direction: column;
+			}
 
-		ul {
-			list-style-type: none;
-			margin: 0;
-			padding: 0;
-		}
+			ul {
+				list-style-type: none;
+				margin: 0;
+				padding: 0;
+			}
 
-		li {
-			padding: 5px 0px;
-			border-bottom: 1px solid #ccc;
-		}
+			li {
+				padding: 5px 0px;
+				border-bottom: 1px solid #ccc;
+			}
 
-		li:hover {
-			color: #333;
-			cursor: pointer;
-		}
+			li:hover {
+				color: #333;
+				cursor: pointer;
+			}
 
-		li:hover>.stamp {
-			font-weight: bold;
-		}
+			li:hover>.stamp {
+				font-weight: bold;
+			}
 
-		.stamp {
-			font-size: 13px;
-			color: #009ee3;
-			padding-bottom: 10px 5px;
-		}
+			.stamp {
+				font-size: 13px;
+				color: #009ee3;
+				padding-bottom: 10px 5px;
+			}
 
-		.stamp-metadata-field {
-			word-break: break-word;
-			height: auto;
-			max-height: 80px;
-			overflow: hidden;
-		}
+			.stamp-metadata-field {
+				word-break: break-word;
+				height: auto;
+				max-height: 80px;
+				overflow: hidden;
+			}
 
-		.stamp-metadata-value {
-			font-size: 11px;
-			font-weight: bold;
-		}
+			.stamp-metadata-value {
+				font-size: 11px;
+				font-weight: bold;
+			}
 
-		.intro {
-			padding-bottom: 10px;
-			font-size: 14px;
-			color: #666;
-			border-bottom: 1px solid #ccc;
-		}
+			.intro {
+				padding-bottom: 10px;
+				font-size: 14px;
+				color: #666;
+				border-bottom: 1px solid #ccc;
+			}
 
-		.empty-state {
-			display: flex;
-			justify-content: center;
-			flex-direction: column;
-			text-align: center;
-		}
+			.empty-state {
+				display: flex;
+				justify-content: center;
+				flex-direction: column;
+				text-align: center;
+			}
 
-		.empty-state>h5 {
-			margin: 0px;
-			padding: 0px;
-			padding-bottom: 5px;
-			font-size: 13px;
-			font-weight: bold;
-		}
-	</style>
-</head>
+			.empty-state>h5 {
+				margin: 0px;
+				padding: 0px;
+				padding-bottom: 5px;
+				font-size: 13px;
+				font-weight: bold;
+			}
+		</style>
+	</head>
 
-<body>
+	<body>
 
-	<div class="stampPanel" style="display: none">
-		<div class="intro">Choose a template and get your files stamped with metadata!</div>
-		<ul class="stamps"></ul>
-	</div>
+		<div class="stampPanel" style="display: none">
+			<div class="intro">Choose a template and get your files stamped with metadata!</div>
+			<ul class="stamps"></ul>
+		</div>
 
-	<div class="noStamps empty-state" style="display: none">
-		<h5>No templates available, unable to stamp files</h5>
-		<div>You can easily create stamp templates by uploading an empty file with extension ".stamp" and then apply metadata to it.</div>
-	</div>
+		<div class="noStamps empty-state" style="display: none">
+			<h5>No templates available, unable to stamp files</h5>
+			<div>You can easily create stamp templates by uploading an empty file with extension ".stamp" and then apply metadata to it.</div>
+		</div>
 
-	<div class="noSelection empty-state" style="display: none">
-		<h5>No files selected</h5>
-		<div>Please select one or multiple files to stamp.</div>
-	</div>
+		<div class="noSelection empty-state" style="display: none">
+			<h5>No files selected</h5>
+			<div>Please select one or multiple files to stamp.</div>
+		</div>
 
-</body>
+	</body>
 
 </html>
