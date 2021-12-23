@@ -18,7 +18,7 @@ V2.0
 * Modified to work as an externally hosted plugin, does not work as locally installed plugin
 * Read the [instruction](https://helpcenter.woodwing.com/hc/articles/360054980711) on installing Assets external plug-ins.
 
-V1.2
+Below V2.0
 * Read the [instruction](https://helpcenter.woodwing.com/hc/articles/115002644606) on installing Elvis plug-ins.
 * Download or clone this package.
 * If you downloaded the package: unpack the zip file and remove the GitHub branch postfix from the folder name (typically -master)
