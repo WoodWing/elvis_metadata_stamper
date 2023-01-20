@@ -98,8 +98,8 @@
 
 			function getFormattedValue(fieldName, fieldValue) {
 				var fi = fieldInfo.fieldInfoByName[fieldName];
-				if (fi.datatype === 'datetime') {
-					// Asssume text or numeric fields
+				if (typeof fieldValue === "object" && fieldValue.formatted) {
+					// Asssume formatted fields
 					return fieldValue.formatted;
 				}
 				else if (fi.multivalue) {
@@ -136,7 +136,7 @@
 					var fi = fieldInfo.fieldInfoByName[fieldName];
 					var sourceValue = sourceMetadata[fieldName];
 					var value = null;
-					if (fi.datatype === 'datetime') {
+					if (typeof sourceValue === "object" && sourceValue.value) {
 						value = sourceValue.value;
 					}
 					else if (fi.multivalue) {
