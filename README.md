@@ -11,6 +11,7 @@ The integration requires:
 * Fully installed and licensed [WoodWing Assets server](https://www.woodwing.com/en/digital-asset-management-system) - v6.59 or higher.
   * If you want to use this plugin on Elvis DAM v6.1 - WoodWing Assets v6.58, use the [1.2 release](https://github.com/WoodWing/elvis_metadata_stamper/releases/tag/v1.2) of this plugin.
 * WoodWing Assets administrator knowledge
+* The user that uses the plugin should have view permissions on the baseName metadata field in order to display the stampfile name correctly in the panel
 
 ## Installation
 
